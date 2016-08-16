@@ -1,0 +1,149 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>级联日期</title>
+</head>
+
+<body>
+	<table id="mytable">
+    	<tr id="tr">
+  <td>出生日期：<select id="year" name="year" style="width:100px;border:1px solid #0000FF;background-color:#fff;" onclick="showYear()" onchange="changeMonth(this.value)">
+				<option>--请选择--</option>
+                
+          </select>
+         <select id="month" name="month" style="width:100px;border:1px solid #0000FF;background-color:#fff;"  onchange="changeDay(this.value)">
+				<option>--请选择--</option>
+                
+          </select>
+          <select id="day" name="day" style="width:100px;border:1px solid #0000FF;background-color:#fff;" >
+				<option>--请选择--</option>
+                
+          </select></td>
+          </tr>
+    </table>
+    
+    <script>
+		function $(id){
+			return document.getElementById(id);
+			}
+		 
+		
+		//年数
+		function showYear(){
+			var mst=$("year");
+			var yList=new Array();
+			for(var i=2017;i>1900;i--){
+			    var mop=document.createElement("option");
+				mop.setAttribute("value",i);
+				mop.innerHTML=i;
+				mst.appendChild(mop);
+				}
+			}
+			
+		//月份
+		function changeMonth(obj){
+			var mst=$("month");
+			if(mst.childNodes.length>6){
+				 mst.removeAllChild();
+				 var mop=document.createElement("option");
+				 mop.innerHTML="--请选择--";
+				 mst.appendChild(mop);
+				 
+				 for(var i=1;i<13;i++){
+			   		 var mop=document.createElement("option");
+					 mop.setAttribute("value",i);
+					 mop.innerHTML=i;
+					 mst.appendChild(mop);
+					}
+				}else{
+					 for(var i=1;i<13;i++){
+			   		 var mop=document.createElement("option");
+					 mop.setAttribute("value",i);
+					 mop.innerHTML=i;
+					 mst.appendChild(mop);
+						}
+					}
+			
+			}	
+		
+		function panduan(obj){
+			var y=parseInt( document.getElementById("year").value );
+			 var m=parseInt( obj);
+			 var k=0;
+			
+			 
+			 switch (m) {
+				case 1:
+				case 3:
+				case 5:
+				case 7:
+				case 8:
+				case 10:
+				case 12:
+					k=31;
+					break;
+			//对于2月份需要判断是否为闰年
+				case 2:
+					if (( y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)) {
+					k=29;
+					break;
+				} else {
+					k=28;
+					break;
+				}
+				case 4:
+				case 6:
+				case 9:
+				case 11:
+					k=30;
+					break;
+				default:
+					break;
+		
+				}
+				return k;
+			}
+		
+		//天数
+	function changeDay(ob){
+		var mst=$("day");
+		var c=mst.childNodes.length;
+/*		alert(mst.childNodes.length);*/
+		if(c>3){
+				/*for(var h=0;h<31;h++){
+					alert(c);
+					alert(h);
+					alert(mst.childNodes[h].innerHTML);
+					mst.removeChild(h);
+					
+					}
+				alert(mst.childNodes.length);*/
+				 var mop=document.createElement("option");
+				 mop.innerHTML="--请选择--";
+				 mst.appendChild(mop);
+				 
+				 var k= panduan( $("month").value );
+				 alert(k);
+				 for( var i=1;i<k;i++){
+					 var mop=document.createElement("option");
+					 mop.setAttribute("value",i);
+					 mop.innerHTML=i;
+					 mst.appendChild(mop);
+					}
+			}else{
+				var k= panduan( $("month").value );
+				for( var i=1;i<k;i++){
+					 var mop=document.createElement("option");
+					 mop.setAttribute("value",i);
+					 mop.innerHTML=i;
+					 mst.appendChild(mop);
+				 	}
+				}
+			}
+		
+		
+		
+	</script>
+</body>
+</html>

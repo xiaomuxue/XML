@@ -1,0 +1,160 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>无标题文档</title>
+<style type="text/css">
+		select{
+			border:1px soild #F90;
+			width:200px;
+			heigth:20px;
+			}
+		
+	</style>
+</head>
+
+<body>
+	<select id="birth_year" onchange="setDays(this,birth_month,birth_day)"><option >--年--</option></select>年&nbsp;
+    <select id="birth_month" onchange="setDays(birth_year,this,birth_day)"><option>--月--</option></select>月&nbsp;
+    <select id="birth_day" onchange="show()"><option>--日--</option></select>日&nbsp;
+    <p id="xingzuo">星座</p>
+    
+    <script>
+		function createXmlDom(){
+    		//定义xmldom变量
+			var xmldom;
+			//区分ie浏览器和其他浏览器
+			if(window.ActiveXObject){ //ie特有的属性 ie9以下的才有
+				//创建xmldom
+				xmldom=createIeXmlDom();
+				
+				
+			}else if( document.implementation && document.implementation.createDocument ){
+					//ff google
+					xmldom=document.implementation.createDocument("","",null);
+					
+				}
+				return xmldom;
+    		}
+	
+		//创建ie浏览器的xmldom
+		function createIeXmlDom(){
+			var arr=["MSXML2.DOMDocument.6.0","MSXML2.DOMDocument.5.0","MSXML2.DOMDocument.4.0",
+			"MSXML2.DOMDocument.3.0","MSXML2.DOMDocument","Microsoft.XMLDOM"];
+			//把所有的核心一个一个的去适配
+			for(var i=0;i<arr.length;i++){
+				try{
+					//得到专属于ie的xmldom
+					var ieXmlDom=new ActiveXObject(arr[i]);
+					return ieXmlDom;
+				}catch(ex){
+					 alert("MSXML组件还没有安装在你的浏览器里面，请更新浏览器");
+					}
+				
+				}
+			}
+			
+			
+			
+		 window.onload=function(){
+			 var birth_year=document.getElementById("birth_year");
+			 var birth_month=document.getElementById("birth_month");
+			 var birth_day=document.getElementById("birth_day");
+			 //添加年
+			 for(var i=new Date().getFullYear();i>1899;i--){
+				 addOption(birth_year,i,i);
+				 }
+				
+			//添加月份
+			for(var i=1;i<=12;i++){
+				addOption(birth_month,i,i);
+				}
+				
+			//添加日期
+			for(var i=1;i<=31;i++){
+				addOption(birth_day,i,i);
+				}
+			 }
+			
+		 function setDays(year,month,day){
+			 //设置每个月的天数
+			 var monthDays=[31,28,31,30,31,30,31,31,30,31,30,31];
+			 var y=year.options[year.selectedIndex].text;
+			 var m=month.options[month.selectedIndex].text;
+			 var d=monthDays[m-1];
+			 
+			 //判断平年闰年
+			 if(m==2 && isLeapYear){
+				 d++;
+				 }
+				 
+			 //判断  31   28
+			 //吧多余的天数删除
+			 for(var j=day.options.length;j>d;j--){
+				 day.remove(j);
+				 }
+			 for(var i=day.options.length;i<=d;i++){
+				 addOption(day,i,i);
+				 }
+			
+			 }
+			 
+		//判断平年闰年
+		function isLeapYear(year){
+			return( (year%4==0 && year%100!=0)||(year%400==0) );
+			}
+			
+		//星座抉择
+		function show(){
+			var xmldom;
+			//兼容goole
+			if(window.DOMParser && window.ActionXObject){
+				//由于gogle浏览器不能直接读取本地文件 所以必须用http请求读取xml文件
+				var xmlhttp=new XMLHttpRequst();
+				xmlhttp.open("GET","xingzuo.xml",false);
+				xmlhttp.send(null);
+				if(xmlhttp.readyState==4){
+					xmldom=xmlhttp.responseXML.documentElement;
+					}
+					
+				}else{
+					xmldom.createXmlDom();
+					xmldom.async=false;
+					xmldom.load("xingzuo.xml");
+					}
+				//得到选中的月和日
+				var month=document.getElementById("birth_month").value;
+				var day=document.getElementById("birth_day").value;
+				if(day<10){
+					day="0"+day;
+					}
+				var xtime=parseInt(month+day);
+				//解析xml
+				var xingxuos=xmldom.getElementsByTagName("string");
+				for(var i=0;i<xingxuos.length;i++){
+					//取出星座时间
+					var times=parseInt( xingzuos[i].getAttribute("time"));
+					//判断
+					if(i==11){
+						if( xtime>=times){
+							document.getElementById("xingzuo").innerHTML=xingzuos[i].firstChild.nodeValues;
+							}
+						}else{
+							if(xtime>=times && times<parseInt(xingzuos[i+1].getAttribute("time"))){
+								document.getElementById("xingzuo").innerHTML=xingzuos[i].firstChild.nodeValue;
+								}
+							}
+					}
+			}
+			
+		function addOption(selectBox,text,value){
+			var option=document.createElement("option");
+			option.text=text;
+			option.value=value;
+			selectBox.options.add(option);
+			}
+			 
+		</script>
+		
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>将xml序列化为Text</title>
+</head>
+
+<body>
+
+   <!--  <p id="result"></p>-->
+     
+     <textarea id="result" cols="60" rows="20"></textarea>
+   
+   <script type="text/javascript">
+        function parseXML(str){
+		    //创建DOM解析器
+			var xmlDoc;      //根节点    customer
+			try{
+			   //internet Explorer
+			   xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+			   //asynchronzed   ->  异步加载
+			   xmlDoc.async=false;     //将加载方式设为同步方式
+			   xmlDoc.loadXML(str);
+			}catch(e){
+			   try{
+			       //Firefox,Mozilla,opera,Webkit.
+				   var parser=new DOMParser();
+				   xmlDoc=parser.parseFromString(str,"text/xml");
+			   }catch(x){
+			       alert(x.message);
+				   return;
+			   }
+			}
+			return xmlDoc;
+		}
+		
+		var xmlStr="<customer><name>张三</name><birthdate>March 10, 1980</birthdate><email>abc@qq.com</email><phone>15367858899</phone></customer>";
+		
+		//将字符串  xmlStr变成  Xml  document对象             序列化：把字符串转换为对象。  字符串的优点：方便存放
+		var xmlDOM=parseXML(xmlStr);          //xmlDOM  ->  customer节点
+		
+		//将  xml document对象转为  string 字符串        反序列化：把对象转换为字符串。  对象的优点:可以直接.方法（属性）     如：  document.getElementById
+		if(xmlDOM.xml){       //IE里面的方法
+		     document.getElementById("result").value=xmlDOM.xml     //xml文件内容    （反序列化）
+		}else{                //W3C浏览器里面的
+		     var serializer= new XMLSerializer();
+			 document.getElementById("result").value=serializer.serializeToString(xmlDOM,"text/xml");
+		}
+		
+		
+   </script>
+   
+
+</body>
+</html>

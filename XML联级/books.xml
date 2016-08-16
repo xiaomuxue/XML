@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Books>
+	<Book id="1">
+		<bookName>编程珠玑</bookName>
+		<bookAuthor>Jon Bentley</bookAuthor>
+		<bookISBN>7-5083-1914-1</bookISBN>
+		<bookPrice>28.0</bookPrice>
+	</Book>
+	<Book id="2">
+		<bookName>Java编程思想（第2版</bookName>
+		<bookAuthor>Bruce Eckel</bookAuthor>
+		<bookISBN>7-111-10441-2</bookISBN>
+		<bookPrice>99.0</bookPrice>
+	</Book>
+	<Book id="3">
+		<bookName>Inside VCL(深入核心VCL架构剖析)</bookName>
+		<bookAuthor>李维</bookAuthor>
+		<bookISBN>7-5053-9489-4</bookISBN>
+		<bookPrice>80.0</bookPrice>
+	</Book>
+</Books>
+
+if(i=xdate.length-1){
+							   alert("a");
+							  p.innerHTML=xdate[i].firstChild.value;
+						  }else{
+							   alert("b");

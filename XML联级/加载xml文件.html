@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>加载xml文件</title>
+</head>
+
+<body>
+	
+    <script>
+	 	function createXmlDom(){
+    		//定义xmldom变量
+			var xmldom;
+			//区分ie浏览器和其他浏览器
+			if(window.ActiveXObject){ //ie特有的属性 ie9以下的才有
+				//创建xmldom
+				xmldom=createIeXmlDom();
+				
+				//加载xml文件
+				//加载xml文件有两种方式
+				//1.异步
+				xmldom.async=true;
+				//readyState有5个值 分别为“
+				/*
+				0.xmldom未初始化
+				1.dom正在加载
+				2.dom完成了加载
+				3.dom已经可用
+				4.完全加载完毕
+				*/
+
+				//2.同步
+//				xmldom.async=false;
+				
+				xmldom.load("books.xml");
+				xmldom.onreadystatechange=function(){
+					alert(xmldom.readyState);
+					}
+//				alert("根节点名："+xmldom.documentElement.tagName);
+				
+			}else if( document.implementation && document.implementation.createDocument ){
+					//ff google
+					xmldom=document.implementation.createDocument("","",null);
+					xmldom.async=false;
+					xmldom.load("books.xml");
+					alert("根节点名："+xmldom.documentElement.tagName);
+				}
+    		}
+	
+		//创建ie浏览器的xmldom
+		function createIeXmlDom(){
+			var arr=["MSXML2.DOMDocument.6.0","MSXML2.DOMDocument.5.0","MSXML2.DOMDocument.4.0",
+			"MSXML2.DOMDocument.3.0","MSXML2.DOMDocument","Microsoft.XMLDOM"];
+			//把所有的核心一个一个的去适配
+			for(var i=0;i<arr.length;i++){
+				try{
+					//得到专属于ie的xmldom
+					var ieXmlDom=new ActiveXObject(arr[i]);
+					return ieXmlDom;
+				}catch(ex){
+					 alert("MSXML组件还没有安装在你的浏览器里面，请更新浏览器");
+					}
+				
+				}
+			}
+			
+			createXmlDom();
+	</script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet type="text/css" href="student.css"?>
+<students>
+     <student id="1">
+	     <name>zy</name>
+		 <sex>male</sex>
+		 <age>20</age>
+	 </student>
+	 <student id="2">
+	      <name>yc</name>
+		  <sex>male</sex>
+		  <age>20</age>
+	 </student>
+</students>

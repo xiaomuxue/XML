@@ -1,0 +1,19 @@
+@charset "utf-8";
+/* CSS Document */
+
+student{
+    border:1px solid red;
+	display:block;
+	width:200px;
+	height:100px;
+}
+
+name{
+   font-size:16px;
+   font-family:"微软雅黑";
+}
+
+sex{
+    color:green;
+}
+

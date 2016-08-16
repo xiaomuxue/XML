@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>使用XPATH技术查询xml中的数据</title>
+</head>
+
+<body>
+
+      <textarea id="result" cols="60" rows="20"></textarea>
+       
+   <script type="text/javascript">
+        function parseXML(str){
+		    //创建DOM解析器
+			var xmlDoc;      //根节点    customer
+			try{
+			   //internet Explorer
+			   xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+			   //asynchronzed   ->  异步加载
+			   xmlDoc.async=false;     //将加载方式设为同步方式
+			   xmlDoc.loadXML(str);
+			}catch(e){
+			   try{
+			       //Firefox,Mozilla,opera,Webkit.
+				   var parser=new DOMParser();
+				   xmlDoc=parser.parseFromString(str,"text/xml");
+			   }catch(x){
+			       alert(x.message);
+				   return;
+			   }
+			}
+			return xmlDoc;
+		}
+		
+		var xmlStr="<customers><customer id='1'><name>张三</name><birthdate>March 10, 1980</birthdate><email>abc@qq.com</email><phone>15367858899</phone></customer><customer id='2'><name>张四</name><birthdate>March 10, 1980</birthdate><email>abc@qq.com</email><phone>15367858899</phone></customer><customer id='3'><name>张五</name><birthdate>March 10, 1980</birthdate><email>abc@qq.com</email><phone>15367858899</phone></customer></customers>";
+		
+		var xmlDOM=parseXML(xmlStr);
+		
+		function selectXMLNodes(xmlDoc,xpath){
+		     if('\v'=='v'){
+			     //IE
+				 xmlDoc.setProperty();  //将当前xml文档的查找方式改为  xpath
+				 return xmlDoc.documentElement.selectNodes(xpath);
+			 }else{
+			     //W3C
+				 var evaluator=new XPathEvaluator();
+				 var resultSet=evaluator.evaluate(xpath,xmlDoc,null,XPathResult.ORDERED_NODE_ITERATOR_TYPE,null);
+				 //通过xpath解析的结果是一个集合。
+				 var finalArray=[];
+				 if(resultSet){
+				     var el=resultSet.iterateNext();     //循环解到的结果。
+					 while(el){
+					     finalArray.push(el);
+						 el=resultSet.iterateNext();
+					 }
+					 return finalArray;
+				 }
+			 }
+		}
+
+		//这样查出来的结果是一个  dom 节点，要按 dom来操作
+		var nodeList=selectXMLNodes(xmlDOM,'/customers/customer[@id=\"1\"]');    // xpath
+		//alert(nodeList[0].innerHTML);
+		//将查找到的xml显示出来。
+		if(xmlDOM.xml){
+		    document.getElementById("result").value=nodeList[0].xml;
+		}else{
+		     var serializer =new XMLSerializer();
+			 document.getElementById("result").value=serializer.serializeToString( nodeList[0] );
+		}
+		
+		
+   </script>
+   
+
+
+ 
+</body>
+</html>

@@ -1,0 +1,203 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>级联日期</title>
+	<style type="text/css">
+		select{
+			border:1px soild #F90;
+			width:200px;
+			heigth:20px;
+			}
+		
+	</style>
+</head>
+
+<body>
+	<select id="year"><option >--年--</option></select>年&nbsp;
+    <select id="month"><option>--月--</option></select>月&nbsp;
+    <select id="day"><option>--日--</option></select>日&nbsp;
+    <p id="xingzuo">星座</p>
+    
+    <script>
+		function createXmlDom(){
+    		//定义xmldom变量
+			var xmldom;
+			//区分ie浏览器和其他浏览器
+			if(window.ActiveXObject){ //ie特有的属性 ie9以下的才有
+				//创建xmldom
+				xmldom=createIeXmlDom();
+				
+				
+			}else if( document.implementation && document.implementation.createDocument ){
+					//ff google
+					xmldom=document.implementation.createDocument("","",null);
+					
+				}
+				return xmldom;
+    		}
+	
+		//创建ie浏览器的xmldom
+		function createIeXmlDom(){
+			var arr=["MSXML2.DOMDocument.6.0","MSXML2.DOMDocument.5.0","MSXML2.DOMDocument.4.0",
+			"MSXML2.DOMDocument.3.0","MSXML2.DOMDocument","Microsoft.XMLDOM"];
+			//把所有的核心一个一个的去适配
+			for(var i=0;i<arr.length;i++){
+				try{
+					//得到专属于ie的xmldom
+					var ieXmlDom=new ActiveXObject(arr[i]);
+					return ieXmlDom;
+				}catch(ex){
+					 alert("MSXML组件还没有安装在你的浏览器里面，请更新浏览器");
+					}
+				
+				}
+			}
+		
+			window.onload=function(){
+				var xmldom;
+				if(window.DOMParser && !window.ActiveXObject ){
+					//由于谷歌浏览微不支持读取本地文件 所以他要放在服务器里面才有效果
+					var xmlhttp=new XMLHttpRequest();
+					xmlhttp.open("GET","xingzuo.xml",false);
+					xmlhttp.send(null);
+					if(xmlhttp.readyState==4 ){
+						xmldom=xmlhttp.responseXML.documentElement;
+						}
+					}else{
+						xmldom=document.implementation.createDocument("","",null);
+						xmldom.async=false;
+						xmldom.load("xingzuo.xml");
+					}
+					
+				
+				//获取年月日的select标签
+				var year=$("year");
+				var month=$("month");
+				var day=$("day");
+				
+				//获取当前系统的日期
+				var date=new Date();
+				var y=date.getFullYear();
+				var m=date.getMonth();
+				
+				
+				//获取所有年份然后添加到select里面
+				var mst=$("year");
+				for(var i=y;i>1900;i--){
+			   		var mop=document.createElement("option");
+					mop.setAttribute("value",i);
+					mop.innerHTML=i;
+					mst.appendChild(mop);
+				}
+				
+				//年份内容改变时 去添加月份
+				year.onchange=function(){
+					month.length=1;
+					var mst=$("month");
+					for(var i=1;i<13;i++){
+						 var mop=document.createElement("option");
+						 mop.setAttribute("value",i);
+					 	 mop.innerHTML=i;
+						 mst.appendChild(mop);
+					}
+				}
+				
+				 //月份内容改变时 添加日
+				 month.onchange=function(){
+					 //获取选中的年月
+					 var selY=year.value;
+					 var selM=month.value;
+					 var days=panduan(selY,selM);
+					 day.length=1;
+					 
+					 var mst=$("day");
+					 for(var i=1;i<=days;i++){
+						   var mop=document.createElement("option");
+					 	   mop.setAttribute("value",i);
+						   mop.innerHTML=i;
+						   mst.appendChild(mop);
+						 }
+				 }
+				
+				//日内容改变时 添加星座
+				 day.onchange=function(){
+					  //获取选中是月日
+					  var m=parseInt(month.value);
+					  var d=parseInt(day.value);
+					  var p=$("xingzuo");
+					  var xd=0;
+					  var xdn=0;
+					  
+					  var xdate=xmldom.getElementsByTagName("string");
+					  
+					/*  for(var i=0;i<xdate.length;i++){
+							  xd=parseInt( xdate[i].getAttribute("time") );
+						 	  xdn=parseInt( xdate[i].nextSibling.nextSibling.getAttribute("time") );
+								if( md>xd&&md<xdn ){
+								 p.innerHTML=xdate[i].innerHTML;
+							 }*/
+							 
+							 if(m == 1 && d >=20 || m == 2 && d <=18){p.innerHTML=xdate[0].innerHTML;}
+							 if(m == 2 && d >=19 || m == 3 && d <=20){p.innerHTML=xdate[1].innerHTML;}
+							 if(m == 3 && d >=21 || m == 4 && d <=19){p.innerHTML=xdate[2].innerHTML;}
+							 if(m == 4 && d >=20 || m == 5 && d <=20){p.innerHTML=xdate[3].innerHTML;}
+							 if(m == 5 && d >=21 || m == 6 && d <=21){p.innerHTML=xdate[4].innerHTML;}
+							 if(m == 6 && d >=22 || m == 7 && d <=22){p.innerHTML=xdate[5].innerHTML;}
+							 if(m == 7 && d >=23 || m == 8 && d <=22){p.innerHTML=xdate[6].innerHTML;}
+							 if(m == 8 && d >=23 || m == 9 && d <=22){p.innerHTML=xdate[7].innerHTML;}
+							 if(m == 9 && d >=23 || m == 10 && d <=22){p.innerHTML=xdate[8].innerHTML;}
+							 if(m == 10 && d >=23 || m == 11 && d <=21){p.innerHTML=xdate[9].innerHTML;}
+							 if(m == 11 && d >=22 || m == 12 && d <=21){p.innerHTML=xdate[10].innerHTML;}
+							 if(m == 12 && d >=22 || m == 1 && d <=19){p.innerHTML=xdate[11].innerHTML;}
+							
+					 }
+				
+					
+			}
+			
+			//
+			function $(id){
+			return document.getElementById(id);
+			}
+			
+			//根据年份月份判断每个月有多少天
+			function panduan(objY,objM){
+				var y=parseInt(objY);
+				var m=parseInt(objM);
+				var k=0;
+				switch (m) {
+					case 1:
+					case 3:
+					case 5:
+					case 7:
+					case 8:
+					case 10:
+					case 12:
+						k=31;
+						break;
+					//对于2月份需要判断是否为闰年
+					case 2:
+						if (( y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)) {
+							k=29;
+						break;
+					} else {
+						k=28;
+						break;
+					}
+					case 4:
+					case 6:
+					case 9:
+					case 11:
+						k=30;
+						break;
+					default:
+						break;
+					}
+					return(k);
+				}
+			
+			
+	</script>
+</body>
+</html>

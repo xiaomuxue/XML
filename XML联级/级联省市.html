@@ -1,0 +1,145 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>级联省市</title>
+	<style type="text/css">
+		select{
+			border:1px soild #F90;
+			width:200px;
+			heigth:20px;
+			}
+	</style>
+</head>
+
+<body>
+	<select id="province"></select>省,直辖市&nbsp;
+    <select id="city"><option value="100100">--请选择市，区--</option></select>市，区&nbsp;
+    <select id="area"><option value="100101">--请选择县，街道--</option></select>县，街道&nbsp;
+
+	<script>
+		function createXmlDom(){
+    		//定义xmldom变量
+			var xmldom;
+			//区分ie浏览器和其他浏览器
+			if(window.ActiveXObject){ //ie特有的属性 ie9以下的才有
+				//创建xmldom
+				xmldom=createIeXmlDom();
+				
+				
+			}else if( document.implementation && document.implementation.createDocument ){
+					//ff google
+					xmldom=document.implementation.createDocument("","",null);
+					
+				}
+				return xmldom;
+    		}
+	
+		//创建ie浏览器的xmldom
+		function createIeXmlDom(){
+			var arr=["MSXML2.DOMDocument.6.0","MSXML2.DOMDocument.5.0","MSXML2.DOMDocument.4.0",
+			"MSXML2.DOMDocument.3.0","MSXML2.DOMDocument","Microsoft.XMLDOM"];
+			//把所有的核心一个一个的去适配
+			for(var i=0;i<arr.length;i++){
+				try{
+					//得到专属于ie的xmldom
+					var ieXmlDom=new ActiveXObject(arr[i]);
+					return ieXmlDom;
+				}catch(ex){
+					 alert("MSXML组件还没有安装在你的浏览器里面，请更新浏览器");
+					}
+				
+				}
+			}
+		
+			window.onload=function(){
+				var xmldom;
+				if(window.DOMParser && !window.ActiveXObject ){
+					//由于谷歌浏览微不支持读取本地文件 所以他要放在服务器里面才有效果
+					var xmlhttp=new XMLHttpRequest();
+					xmlhttp.open("GET","city.xml",false);
+					xmlhttp.send(null);
+					if(xmlhttp.readyState==4 ){
+						xmldom=xmlhttp.responseXML.documentElement;
+						}
+					}else{
+						xmldom=document.implementation.createDocument("","",null);
+						xmldom.async=false;
+						xmldom.load("city.xml");
+					}
+
+				//获取省市县的select标签
+				var province=document.getElementById("province");
+				var city=document.getElementById("city");
+				var area=document.getElementById("area");
+				
+				//开始解析xml
+				//获取所有的省份
+				
+				var pros=xmldom.getElementsByTagName("province");	
+				
+				for(var i=0;i<pros.length;i++){
+					addOption(pros[i],province);
+					}		
+					
+				//省份内容改变时 去添加城市
+				province.onchange=function(){
+					//获取到省份的code
+					var code=province.value;
+					city.length=1;
+					for(var i=0;i<pros.length;i++){
+						//根据code来找到你选的是那个省份
+						if(pros[i].nodeType==1 && pros[i].getAttribute("postcode")==code ){
+							//取出所有的城市
+							var cities=pros[i].childNodes;
+							for(var j=0;j<cities.length;j++){
+								addOption(cities[j],city);
+								}
+							}
+						}
+					}
+					
+				 //城市内容改变时 添加县
+				 city.onchange=function(){
+					 //获取到省份的code
+					 var selPro=province.value;
+					 var code=city.value;
+					
+					 area.length=1;
+					 
+					 for(var i=0;i<pros.length;i++){
+						 //根据code来找到你选的是那个省份
+						 if(pros[i].nodeType==1 && pros[i].getAttribute("postcode")==selPro){
+							 //取出所有的城市
+							var cities=pros[i].childNodes;
+							for(var j=0;j<cities.length;j++){
+								//根据code来找到你选的是哪个城市
+								if( cities[j].nodeType==1 && cities[j].getAttribute("postcode")==code){
+									var areas=cities[j].childNodes;
+									for(var k=0;k<areas.length;k++){
+										addOption(areas[k],area);
+										}
+									}
+								}
+							 }
+						 }
+					 }
+					 
+			}
+					 
+					 //添加option
+					 function addOption(node,obj){
+						 if(node.nodeType==1){
+							 //创建一个option
+							 var opt=document.createElement("option");
+							 opt.appendChild( document.createTextNode(node.getAttribute("name") ));
+							 opt.setAttribute("value",node.getAttribute("postcode") );
+							 
+							 //将省份添加到select里面
+							 obj.appendChild(opt);
+							 }
+						 }
+				
+	</script>
+</body>
+</html>

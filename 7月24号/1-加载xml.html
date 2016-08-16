@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>加载xml</title>
+</head>
+
+<body>
+   <p id="result"></p>
+   
+   <script type="text/javascript">
+        function parseXML(str){
+		    //创建DOM解析器
+			var xmlDoc;      //根节点    customer
+			try{
+			   //internet Explorer
+			   xmlDoc = new ActiveXObject("Microsoft.XMLDOM");
+			   //asynchronzed   ->  异步加载
+			   xmlDoc.async=false;     //将加载方式设为同步方式
+			   xmlDoc.loadXML(str);
+			}catch(e){
+			   try{
+			       //Firefox,Mozilla,opera,Webkit.
+				   var parser=new DOMParser();
+				   xmlDoc=parser.parseFromString(str,"text/xml");
+			   }catch(x){
+			       alert(x.message);
+				   return;
+			   }
+			}
+			return xmlDoc;
+		}
+		
+		var xmlStr="<customer><name>张三</name><birthdate>March 10, 1980</birthdate><email>abc@qq.com</email><phone>15367858899</phone></customer>";
+		
+		var xmlDOM=parseXML(xmlStr);
+		
+		document.getElementById("result").innerHTML=xmlDOM.getElementsByTagName("name")[0].childNodes[0].nodeValue;
+   </script>
+   
+</body>
+</html>
